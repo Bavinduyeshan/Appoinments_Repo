@@ -12,6 +12,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class AppoinmentService {
 
@@ -159,4 +162,26 @@ public class AppoinmentService {
     }
 
 
+    public List<Appoinments> getAllAppoinments(){
+        return  appoinmentRepositery.findAll();
+    }
+
+
+    public  String updateAppoinment(Integer appoinmentId,Appoinments appoinments){
+        Optional<Appoinments>exisitnAppoinment=appoinmentRepositery.findById(appoinmentId);
+        if (exisitnAppoinment.isPresent()){
+            Appoinments updateAppoinemnt=exisitnAppoinment.get();
+
+            updateAppoinemnt.setDocname(appoinments.getDocname());
+            updateAppoinemnt.setAppoinment_Date(appoinments.getAppoinment_Date());
+            updateAppoinemnt.setAppoinment_Time(appoinments.getAppoinment_Time());
+            updateAppoinemnt.setReason(appoinments.getReason());
+
+            appoinmentRepositery.save(updateAppoinemnt);
+            return "Appoinment updated Succesfully";
+        }
+        else {
+            throw  new RuntimeException("Appoinemn not found");
+        }
+    }
 }

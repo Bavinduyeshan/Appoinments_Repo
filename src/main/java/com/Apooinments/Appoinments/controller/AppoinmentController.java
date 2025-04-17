@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @CrossOrigin(origins = "http://localhost:5173", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.OPTIONS})
 // Adjust based on your frontend origin
@@ -42,5 +44,23 @@ public class AppoinmentController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error" +ex.getMessage());
         }
 
+    }
+
+
+    @GetMapping("/getAll")
+    public List<Appoinments>getAllAppoinmetns(){
+        return  appoinmentService.getAllAppoinments();
+    }
+
+
+    @PutMapping("/update/{appoinmentId}")
+    public  ResponseEntity<String>updateAppoinemnt(@PathVariable Integer appoinmentId,@RequestBody Appoinments appoinments){
+        try {
+            String result=appoinmentService.updateAppoinment(appoinmentId,appoinments);
+            return new ResponseEntity<>(result,HttpStatus.OK);
+        }
+        catch (Exception ex) {
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

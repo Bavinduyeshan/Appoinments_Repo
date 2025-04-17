@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AppoinmentRepositery extends JpaRepository<Appoinments,Integer> {
 
+    Appoinments findByAppoinmentId (Integer appoinmentId);
+
 }

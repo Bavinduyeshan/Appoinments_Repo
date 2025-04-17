@@ -1,6 +1,7 @@
 package com.Apooinments.Appoinments.model;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
 import java.sql.Date;
@@ -12,7 +13,8 @@ public class Appoinments {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY )
+    @Column(name = "appoinment_Id", nullable = false)
     private Integer appoinmentId;
 
 //    private String PhysicianName;
@@ -24,10 +26,12 @@ public class Appoinments {
     private  String docname;
 
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(name = "appoinment_Date", nullable = false)
     private Date appoinment_Date;
 
 
+    @JsonFormat(pattern = "HH:mm:ss")
     @Column(name = "appoinment_Time", nullable = false)
     private Time appoinment_Time;
 
