@@ -2,6 +2,7 @@ package com.Apooinments.Appoinments.service;
 
 
 import com.Apooinments.Appoinments.model.Appoinments;
+import com.Apooinments.Appoinments.model.DoctorResponse;
 import com.Apooinments.Appoinments.model.PatientResponse;
 import com.Apooinments.Appoinments.repositery.AppoinmentRepositery;
 import feign.FeignException;
@@ -25,6 +26,9 @@ public class AppoinmentService {
 
     @Autowired
     private PatientServiceClient patientServiceClient;
+
+    @Autowired
+    private DoctorServiceClient doctorServiceClient;
 
 
 //    public String createAppoinment(Appoinments appoinments){
@@ -67,6 +71,11 @@ public class AppoinmentService {
                 throw new RuntimeException("Patient ID is missing in request");
             }
 
+            if (appoinments.getDoctorID()==null){
+                throw new RuntimeException("Doctor ID is missing in request");
+
+            }
+
             // Fetch patient data and validate
             PatientResponse patientResponse;
             try {
@@ -75,11 +84,20 @@ public class AppoinmentService {
                 throw new RuntimeException("Requested Patient ID " + appoinments.getPatientID() + " does not exist");
             }
 
+            DoctorResponse doctorResponse;
+            try {
+                doctorResponse=doctorServiceClient.validateDoctor(appoinments.getDoctorID());
+            }
+            catch (FeignException.NotFound e){
+                throw new RuntimeException("Requested Doctor ID " + appoinments.getDoctorID() + " does not exist");
+
+            }
+
             // Save the appointment
             appoinmentRepositery.save(appoinments);
 
             // Send email to patient
-            sendAppointmentConfirmationEmail(patientResponse, appoinments);
+            sendAppointmentConfirmationEmail(patientResponse, appoinments,doctorResponse);
 
             return "Appointment added successfully";
         } catch (Exception ex) {
@@ -90,7 +108,7 @@ public class AppoinmentService {
         }
     }
 
-    private void sendAppointmentConfirmationEmail(PatientResponse patientResponse, Appoinments appoinments) {
+    private void sendAppointmentConfirmationEmail(PatientResponse patientResponse, Appoinments appoinments,DoctorResponse doctorResponse) {
         try {
             String patientEmail = patientResponse.getEmail();
             if (patientEmail == null || patientEmail.isEmpty()) {
@@ -124,7 +142,7 @@ public class AppoinmentService {
                     "<table style='width: 100%; margin: 20px 0; border-collapse: collapse;'>" +
                     "<tr style='background-color: #f8f9fa;'>" +
                     "<td style='padding: 10px; font-weight: bold; color: #555555;'>Doctor:</td>" +
-                    "<td style='padding: 10px; color: #333333;'>" + appoinments.getDocname() + "</td>" +
+                    "<td style='padding: 10px; color: #333333;'>" + (doctorResponse.getFirstname())+ ""+(doctorResponse.getLastname())+ "</td>" +
                     "</tr>" +
                     "<tr>" +
                     "<td style='padding: 10px; font-weight: bold; color: #555555;'>Date:</td>" +
@@ -172,7 +190,7 @@ public class AppoinmentService {
         if (exisitnAppoinment.isPresent()){
             Appoinments updateAppoinemnt=exisitnAppoinment.get();
 
-            updateAppoinemnt.setDocname(appoinments.getDocname());
+            updateAppoinemnt.setDoctorID(appoinments.getDoctorID());
             updateAppoinemnt.setAppoinment_Date(appoinments.getAppoinment_Date());
             updateAppoinemnt.setAppoinment_Time(appoinments.getAppoinment_Time());
             updateAppoinemnt.setReason(appoinments.getReason());
@@ -183,5 +201,9 @@ public class AppoinmentService {
         else {
             throw  new RuntimeException("Appoinemn not found");
         }
+    }
+
+    public  Optional<Appoinments> getAppoinmetByPatientID(Integer patientID){
+        return Optional.ofNullable(appoinmentRepositery.findByPatientID(patientID));
     }
 }

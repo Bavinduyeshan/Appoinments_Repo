@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @CrossOrigin(origins = "http://localhost:5173", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.OPTIONS})
@@ -61,6 +62,25 @@ public class AppoinmentController {
         }
         catch (Exception ex) {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @GetMapping("/GET/{patientID}")
+    public  ResponseEntity<?> getPatientByID(@PathVariable Integer patientID){
+
+        try {
+            Optional<Appoinments> appoinments=appoinmentService.getAppoinmetByPatientID(patientID);
+            if (appoinments.isPresent()){
+                return  ResponseEntity.ok(appoinments.get());
+            }
+            else {
+                return  new ResponseEntity<>("Appoinment not found",HttpStatus.OK);
+
+            }
+        }
+        catch (Exception ex){
+            return new ResponseEntity<>(ex.getMessage(),HttpStatus.OK);
         }
     }
 }

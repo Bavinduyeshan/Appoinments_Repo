@@ -16,4 +16,5 @@ public interface PatientServiceClient {
 
     @GetMapping("/get/{id}")
     PatientResponse getPatientData(@PathVariable int id);
+
 }

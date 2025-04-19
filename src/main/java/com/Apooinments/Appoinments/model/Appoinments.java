@@ -22,8 +22,16 @@ public class Appoinments {
     @Column(name = "patient_id", nullable = false)
     private  Integer patientID;
 
-    @Column(name = "doctorname", nullable = false)
-    private  String docname;
+//    @Column(name = "doctorname", nullable = false)
+//    private  String docname;
+
+    @Column(name = "doctor_Id", nullable = false)
+    private Integer doctorID;
+
+
+
+
+
 
 
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -38,12 +46,21 @@ public class Appoinments {
     private String reason;
 
 
-    public String getDocname() {
-        return docname;
+//    public String getDocname() {
+//        return docname;
+//    }
+//
+//    public void setDocname(String docname) {
+//        this.docname = docname;
+//    }
+
+
+    public Integer getDoctorID() {
+        return doctorID;
     }
 
-    public void setDocname(String docname) {
-        this.docname = docname;
+    public void setDoctorID(Integer doctorID) {
+        this.doctorID = doctorID;
     }
 
     public Integer getAppoinmentId() {

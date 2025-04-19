@@ -10,4 +10,7 @@ public interface AppoinmentRepositery extends JpaRepository<Appoinments,Integer>
 
     Appoinments findByAppoinmentId (Integer appoinmentId);
 
+    Appoinments findByPatientID(Integer patientID);
+
+
 }
